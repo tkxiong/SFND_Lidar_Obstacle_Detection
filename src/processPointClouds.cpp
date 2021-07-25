@@ -79,7 +79,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     seg.setModelType(pcl::SACMODEL_PLANE);
     seg.setMethodType(pcl::SAC_RANSAC);
     seg.setMaxIterations(maxIterations);
-    seg.setDistanceThresgold(distanceThreshold);
+    seg.setDistanceThreshold(distanceThreshold);
 
     // Segment the largest planar component from the input cloud
     seg.setInputCloud(cloud);
