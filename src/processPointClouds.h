@@ -55,6 +55,6 @@ public:
 
     std::vector<typename pcl::PointCloud<PointT>::Ptr> EuclideanClustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize);
 
-    void Proximity(typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<int>& cluster, std::vector<bool>& processed, int idx, KdTree<PointT>* tree, float distanceTol);
+    void Proximity(typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<int>& cluster, std::vector<bool>& processed, int idx, KdTree* tree, float distanceTol);
 };
 #endif /* PROCESSPOINTCLOUDS_H_ */

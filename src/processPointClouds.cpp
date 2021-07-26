@@ -328,13 +328,17 @@ template<typename PointT>
 std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::EuclideanClustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize)
 {
     int numPoints = cloud->points.size();
-    KdTree<PointT> *tree = new KdTree<PointT>;
+    KdTree* tree = new KdTree;
     std::vector<bool> processed(numPoints, false);
     std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
 
     for (int i = 0; i < numPoints; i++)
     {
-        tree->insert(cloud->points[i], i);
+        std::vector<float> point(3);
+        point[0] = cloud->points[i].x;
+        point[1] = cloud->points[i].y;
+        point[2] = cloud->points[i].z;
+        tree->insert(point, i);
     }
 
 	for (int j = 0; j < numPoints; j++)
@@ -366,11 +370,16 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::E
 }
 
 template<typename PointT>
-void ProcessPointClouds<PointT>::Proximity(typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<int>& cluster, std::vector<bool>& processed, int idx, KdTree<PointT>* tree, float distanceTol)
+void ProcessPointClouds<PointT>::Proximity(typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<int>& cluster, std::vector<bool>& processed, int idx, KdTree* tree, float distanceTol)
 {
     processed[idx] = true;
 	cluster.push_back(idx);
-	std::vector<int> neighborPoints = tree->search(cloud->points[idx], distanceTol);
+    std::vector<float> point(3);
+    point[0] = cloud->points[idx].x;
+    point[1] = cloud->points[idx].y;
+    point[2] = cloud->points[idx].z;
+
+	std::vector<int> neighborPoints = tree->search(point, distanceTol);
 
 	for (int neighborId : neighborPoints)
 	{

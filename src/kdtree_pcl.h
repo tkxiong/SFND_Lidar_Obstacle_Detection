@@ -1,15 +1,14 @@
 #include <vector>
 
 // Structure to represent node of kd tree
-template<typename PointT>
 struct Node
 {
-	PointT point;
+	std::vector<float> point;
 	int id;
 	Node* left;
 	Node* right;
 
-	Node(PointT arr, int setId)
+	Node(std::vector<float> arr, int setId)
 	:	point(arr), id(setId), left(NULL), right(NULL)
 	{}
 
@@ -20,10 +19,9 @@ struct Node
 	}
 };
 
-template<typename PointT>
 struct KdTree
 {
-	Node<PointT>* root;
+	Node* root;
 
 	KdTree()
 	: root(NULL)
@@ -34,73 +32,48 @@ struct KdTree
 		delete root;
 	}
 
-	void insertNode(Node<PointT> **node, uint depth, PointT point, int id)
+	void insertNode(Node **node, uint depth, std::vector<float> &point, int id)
 	{
 		// Tree is empty
 		if (*node == NULL)
 		{
-			*node = new Node<PointT>(point, id);
+			*node = new Node(point, id);
 		}
 		else
 		{
 			// Calculate current dim
 			uint cd = depth % 3;
 
-            if (cd == 0)
+            if (point[cd] < ((*node)->point[cd]))
             {
-                if (point.x < ((*node)->point.x))
-                {
-                    insertNode(&((*node)->left), depth + 1, point, id);
-                }
-                else
-                {
-                    insertNode(&((*node)->right), depth + 1, point, id);
-                }
-            }
-            else if (cd == 1)
-            {
-                if (point.y < ((*node)->point.y))
-                {
-                    insertNode(&((*node)->left), depth + 1, point, id);
-                }
-                else
-                {
-                    insertNode(&((*node)->right), depth + 1, point, id);
-                }
+                insertNode(&((*node)->left), depth + 1, point, id);
             }
             else
             {
-                if (point.z < ((*node)->point.z))
-                {
-                    insertNode(&((*node)->left), depth + 1, point, id);
-                }
-                else
-                {
-                    insertNode(&((*node)->right), depth + 1, point, id);
-                }
+                insertNode(&((*node)->right), depth + 1, point, id);
             }
 		}
 	}
 
 
-	void insert(PointT point, int id)
+	void insert(std::vector<float> &point, int id)
 	{
 		// TODO: Fill in this function to insert a new point into the tree
 		// the function should create a new node and place correctly with in the root 
 		insertNode(&root, 0, point, id);
 	}
 
-	void searchKDTreeNeighbors(PointT target, Node<PointT>* node, int depth, float distanceTol, std::vector<int> &ids)
+	void searchKDTreeNeighbors(std::vector<float> &target, Node* node, int depth, float distanceTol, std::vector<int> &ids)
 	{
 		if (node != NULL)
 		{
-			if ((node->point.x >= (target.x - distanceTol) && node->point.x <= (target.x + distanceTol)) && 
-				(node->point.y >= (target.y - distanceTol) && node->point.y <= (target.y + distanceTol)) &&
-                (node->point.z >= (target.z - distanceTol) && node->point.z <= (target.z + distanceTol)))
+			if ((node->point[0] >= (target[0] - distanceTol) && node->point[0] <= (target[0] + distanceTol)) && 
+				(node->point[1] >= (target[1] - distanceTol) && node->point[1] <= (target[1] + distanceTol)) &&
+                (node->point[2] >= (target[2] - distanceTol) && node->point[2] <= (target[2] + distanceTol)))
 			{
-				float deltaX = node->point.x - target.x;
-				float deltaY = node->point.y - target.y;
-                float deltaZ = node->point.z - target.z;
+				float deltaX = node->point[0] - target[0];
+				float deltaY = node->point[1] - target[1];
+                float deltaZ = node->point[2] - target[2];
 	
 				float distance = sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 				if (distance <= distanceTol)
@@ -111,45 +84,20 @@ struct KdTree
 
 			uint cd = depth % 3;
 
-            if (cd == 0)
+            if ((target[cd] - distanceTol) < node->point[cd])
             {
-                if ((target.x - distanceTol) < node->point.x)
-                {
-                    searchKDTreeNeighbors(target, node->left, depth + 1, distanceTol, ids);
-                }
-                if ((target.x + distanceTol) > node->point.x)
-                {
-                    searchKDTreeNeighbors(target, node->right, depth + 1, distanceTol, ids);
-                }
+                searchKDTreeNeighbors(target, node->left, depth + 1, distanceTol, ids);
             }
-            else if (cd == 1)
+            if ((target[cd] + distanceTol) > node->point[cd])
             {
-                if ((target.y - distanceTol) < node->point.y)
-                {
-                    searchKDTreeNeighbors(target, node->left, depth + 1, distanceTol, ids);
-                }
-                if ((target.y + distanceTol) > node->point.y)
-                {
-                    searchKDTreeNeighbors(target, node->right, depth + 1, distanceTol, ids);
-                }
-            }
-            else
-            {
-                if ((target.z - distanceTol) < node->point.z)
-                {
-                    searchKDTreeNeighbors(target, node->left, depth + 1, distanceTol, ids);
-                }
-                if ((target.z + distanceTol) > node->point.z)
-                {
-                    searchKDTreeNeighbors(target, node->right, depth + 1, distanceTol, ids);
-                }
+                searchKDTreeNeighbors(target, node->right, depth + 1, distanceTol, ids);
             }
 		}
 	}
 
 
 	// return a list of point ids in the tree that are within distance of target
-	std::vector<int> search(PointT target, float distanceTol)
+	std::vector<int> search(std::vector<float> &target, float distanceTol)
 	{
 		std::vector<int> ids;
 		searchKDTreeNeighbors(target, root, 0, distanceTol, ids);
