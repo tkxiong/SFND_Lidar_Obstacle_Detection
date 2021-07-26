@@ -86,12 +86,12 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     Eigen::Vector4f minPoint(-15, -6.5, -2, 1);
     Eigen::Vector4f maxPoint(40, 6.5, 1, 1);
     // segment parameters
-    int maxIter = 10;
+    int maxIter = 40;
     float distanceThreshold = 0.3;
     // cluster parameters
     float clusterTolerance = 0.5;
     int minClusterSize = 20;
-    int maxClusterSize = 200;
+    int maxClusterSize = 150;
 
     // filter point cloud
     pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud, filterRes, minPoint, maxPoint);
