@@ -81,13 +81,13 @@ void proximity(const std::vector<std::vector<float>> points, std::vector<int>& c
 	cluster.push_back(idx);
 	std::vector<int> neighborPoints = tree->search(points[idx], distanceTol);
 
-		for(int neighborId: neighborPoints)
+	for (int neighborId : neighborPoints)
+	{
+		if (!processed[neighborId])
 		{
-			if (!processed[neighborId])
-			{
-				proximity(points, cluster, processed, neighborId, tree, distanceTol);
-			}
+			proximity(points, cluster, processed, neighborId, tree, distanceTol);
 		}
+	}
 }
 
 std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol)
