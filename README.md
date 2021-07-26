@@ -142,3 +142,8 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 [PCL Source Github](https://github.com/PointCloudLibrary/pcl)
 
 [PCL Mac Compilation Docs](https://pcl.readthedocs.io/projects/tutorials/en/latest/compiling_pcl_macosx.html#compiling-pcl-macosx)
+
+### Steps For Obstacle Detection
+1.  Segment the filtered cloud into two parts, road and obstacles.
+2. Cluster the obstacle cloud
+3. Find bounding boxes for the clusters
